@@ -1,0 +1,37 @@
+vocabulary V {
+    type Dog := {Fred}
+    type People := {Sam}
+    type Day := {Saturday, Sunday}
+    type Location := {Park, Museum}
+
+    collie: Dog -> Bool 
+    masterOf: Dog -> People
+    warm: Day -> Bool
+    trained: Dog -> Bool
+    goodDog: Dog -> Bool
+    locationOfPeople: People -> Location
+    locationOfDog: Dog -> Location
+    weekend: Day -> Bool
+    today: () -> Day
+}
+
+structure S: V {
+    collie := {Fred}.
+    masterOf := {Fred -> Sam}.
+    today := Saturday.
+    warm := {}.
+    trained := {Fred}.
+    weekend := {Saturday, Sunday}.
+}
+
+theory T: V {
+    !x in Dog: collie(x) and trained(x) => goodDog(x).
+    !x in Dog: !y in People: !z in Location: goodDog(x) and masterOf(x) = y and locationOfPeople(y) = z => locationOfDog(x) = z.
+    weekend(today()) and warm(today()) => locationOfPeople(Sam) = Park.
+    weekend(today()) and ~warm(today()) => locationOfPeople(Sam) = Museum.
+}
+
+procedure main() {
+    pretty_print(Theory(T, S).expand(10))
+    duration("End")
+}
